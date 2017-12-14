@@ -40,7 +40,14 @@ namespace KeePass
 
             Log.Info("Successfully retrieved credentials for {Database}", id);
 
-            return await UnlockAsync(dbFile, credentials);
+            IKeePassDatabase UnlockedDatabase = await UnlockAsync(dbFile, credentials);
+
+            if (UnlockedDatabase != null)
+            {
+                credentialProvider.SetCredentialsAsync(dbFile, credentials);
+            }
+
+            return UnlockedDatabase;
         }
 
         public abstract Task<IKeePassDatabase> UnlockAsync(IFile dbFile, KeePassCredentials credentials);
